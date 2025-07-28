@@ -15,6 +15,11 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (!$request->user() || !$request->user()->tokenCan('admin')) {
+            return response()->json([
+                'message' => 'Unauthorized - Admin access only'
+            ], 403);
+        }
         return $next($request);
     }
 }
