@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
@@ -18,7 +17,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_admin' => false, // Default to regular user
+            'is_admin' => false,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -64,6 +63,4 @@ class AuthController extends Controller
             'message' => 'Logged out successfully'
         ]);
     }
-
-
 }
