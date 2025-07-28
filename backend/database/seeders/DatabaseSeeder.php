@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'Admin User',
-            'email' => 'admin@example.com',
+            'email' => 'admin@shiabul.com',
             'password' => Hash::make('123456'),
             'is_admin' => true,
         ]);
@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'Regular User',
-            'email' => 'user@example.com',
+            'email' => 'user@shiabul.com',
             'password' => Hash::make('123456'),
             'is_admin' => false,
         ]);
@@ -36,21 +36,21 @@ class DatabaseSeeder extends Seeder
         Service::create([
             'name' => 'Haircut',
             'description' => 'Professional haircut service',
-            'price' => 25.00,
+            'price' => 300.00,
             'status' => true,
         ]);
 
         Service::create([
             'name' => 'Massage',
             'description' => 'Relaxing full body massage',
-            'price' => 60.00,
+            'price' => 250.00,
             'status' => true,
         ]);
 
         Service::create([
             'name' => 'Manicure',
             'description' => 'Hand care and nail treatment',
-            'price' => 35.00,
+            'price' => 400.00,
             'status' => true,
         ]);
     }

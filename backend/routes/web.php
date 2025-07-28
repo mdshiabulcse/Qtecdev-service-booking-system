@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Artisan;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,4 +15,22 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+Route::get('/route-cache', function() {
+    Artisan::call('route:clear');
+    return 'Routes cache has been cleared';
+});
+Route::get('/migrate', function() {
+    Artisan::call('migrate');
+    return 'Migrated Done';
+});
+Route::get('/storage-link', function() {
+    Artisan::call('storage:link');
+    return 'Storage Link Done';
+});
+Route::get('/db-seed', function() {
+    Artisan::call('db:seed');
+    return 'DB Seed Done';
 });
