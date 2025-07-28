@@ -30,7 +30,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getServices } from '@/api/services'
-import ServiceCard from '@/components/ServiceCard.vue'
+// import ServiceCard from '@/components/ServiceCard.vue'
 import { useAuthStore } from '@/store/auth'
 
 const authStore = useAuthStore()
