@@ -70,6 +70,8 @@ const handleSubmit = async () => {
   isSubmitting.value = true
   errors.value = {}
 
+  alert('iinnn',form.value.service_id)
+
   try {
     await createBooking({
       service_id: form.value.service_id,

@@ -33,6 +33,8 @@ export const useAuthStore = defineStore('auth', {
         this.token = response.data.token
         this.isAuthenticated = true
         localStorage.setItem('token', response.data.token)
+        localStorage.setItem('users', response.data.user)
+        localStorage.setItem('is_admin',  response.data.user.is_admin)
         return true
       } catch (error) {
         this.clearAuth()
