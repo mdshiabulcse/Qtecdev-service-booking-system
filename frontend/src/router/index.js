@@ -31,19 +31,6 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/bookings/new',
-    name: 'booking-create',
-    component: () => import('@/views/bookings/CreateBooking.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/bookings/new/:serviceId',
-    name: 'service-booking-create',
-    component: () => import('@/views/bookings/CreateBooking.vue'),
-    meta: { requiresAuth: true },
-    props: true
-  },
-  {
     path: '/admin',
     name: 'admin',
     component: () => import('@/views/AdminDashboard.vue'),
@@ -64,7 +51,6 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
-  // Initialize auth state if token exists
   if (!authStore.isAuthenticated && authStore.token) {
     const isAuthenticated = await authStore.init()
     if (!isAuthenticated && to.meta.requiresAuth) {
@@ -73,7 +59,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return '/login'
+    return '/'
   }
 
   if (to.meta.requiresAdmin && !authStore.isAdmin) {

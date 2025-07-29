@@ -67,5 +67,13 @@ class AuthController extends Controller
         ]);
     }
 
+    public function checkAuth(Request $request)
+    {
+        return response()->json([
+            'authenticated' => true,
+            'user' => $request->user(),
+        ]);
+    }
+
 
 }

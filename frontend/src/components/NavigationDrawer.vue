@@ -43,7 +43,6 @@ const navItems = computed(() => {
   return items
 })
 
-// Expose drawer control to parent component
 defineExpose({
   drawer
 })

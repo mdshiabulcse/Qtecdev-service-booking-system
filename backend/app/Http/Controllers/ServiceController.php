@@ -15,12 +15,14 @@ class ServiceController extends Controller
 
     public function index()
     {
-        $services = Service::where('status', true)->get();
+        $services = Service::get();
         return response()->json($services);
     }
 
     public function store(ServiceRequest $request)
     {
+
+
         if (!$request->user()->is_admin) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }

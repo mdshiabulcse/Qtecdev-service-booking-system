@@ -70,7 +70,6 @@ onMounted(async () => {
 })
 
 const editUser = (user) => {
-  // Implement user editing functionality
   console.log('Edit user:', user)
 }
 </script>
