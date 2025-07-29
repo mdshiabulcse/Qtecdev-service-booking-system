@@ -297,7 +297,7 @@ npm run dev
 ### 1. User Interface Components
 **Location:** `src/components/`
 
-![UI Components](https://i.imgur.com/example1.jpg)  
+![UI Components](./ux_file/home.png)  
 *Sample reusable components in action*
 
 - **AppBar.vue**: Main navigation header with user controls
@@ -309,28 +309,28 @@ npm run dev
 **Location:** `src/views/`
 
 #### Authentication Views
-![Login Screen](https://i.imgur.com/example2.jpg)  
+![Login Screen](./ux_file/login.png)  
 *User authentication interface*
 
 - **Login.vue**: User sign-in form
 - **Register.vue**: New account registration
 
 #### Service Management
-![Service Catalog](https://i.imgur.com/example3.jpg)  
+![Service Catalog](./ux_file/service.png)  
 *Service catalog display*
 
 - **ServicesList.vue**: Grid view of available services
 - **ServiceForm.vue**: Admin service creation/editing
 
 #### Booking Management
-![Booking Flow](https://i.imgur.com/example4.jpg)  
+![Booking Flow](./ux_file/booking.png)  
 *Booking creation workflow*
 
 - **BookingsList.vue**: User's booking history
 - **CreateBooking.vue**: New booking form
 
 #### Admin Dashboard
-![Admin Panel](https://i.imgur.com/example5.jpg)  
+![Admin Panel](./ux_file/admin.png)  
 *Administrative control center*
 
 - **AdminDashboard.vue**: Management console for admins
@@ -352,25 +352,13 @@ npm run dev
 - Implements route guards for security
 - Supports lazy loading for performance
 
-## Visual Design System
-![Design System](./ux_file/login.png)  
-*UI consistency across components*
-
-- Responsive layout for all devices
-- Consistent color scheme and typography
-- Accessible interface components
-- Interactive elements with visual feedback
-
-## User Flows
-
-
 
 
 ### Customer Journey
 1. Registration
 2. Service browsing
 3. Booking
-4. History
+
 
 ### Admin Workflow
 1. Login
