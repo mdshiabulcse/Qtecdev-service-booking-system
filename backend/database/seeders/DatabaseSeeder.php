@@ -34,23 +34,44 @@ class DatabaseSeeder extends Seeder
 
 
         Service::create([
-            'name' => 'Haircut',
-            'description' => 'Professional haircut service',
-            'price' => 300.00,
+            'name' => 'Concert Ticket',
+            'description' => 'General admission ticket for music concert',
+            'price' => 800.00,
             'status' => true,
         ]);
 
         Service::create([
-            'name' => 'Massage',
-            'description' => 'Relaxing full body massage',
-            'price' => 250.00,
+            'name' => 'VIP Concert Ticket',
+            'description' => 'VIP access with premium seating and perks',
+            'price' => 2500.00,
             'status' => true,
         ]);
 
         Service::create([
-            'name' => 'Manicure',
-            'description' => 'Hand care and nail treatment',
-            'price' => 400.00,
+            'name' => 'Sports Event Ticket',
+            'description' => 'Ticket for premier league football match',
+            'price' => 1500.00,
+            'status' => true,
+        ]);
+
+        Service::create([
+            'name' => 'Standard Room',
+            'description' => 'Overnight stay in standard room with breakfast',
+            'price' => 2500.00,
+            'status' => true,
+        ]);
+
+        Service::create([
+            'name' => 'Deluxe Suite',
+            'description' => 'Overnight stay in deluxe suite with all amenities',
+            'price' => 5000.00,
+            'status' => true,
+        ]);
+
+        Service::create([
+            'name' => 'Presidential Suite',
+            'description' => 'Luxury overnight stay in presidential suite',
+            'price' => 12000.00,
             'status' => true,
         ]);
     }
