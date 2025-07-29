@@ -25,19 +25,6 @@ const routes = [
     component: () => import('@/views/services/ServicesList.vue')
   },
   {
-    path: '/services/new',
-    name: 'service-create',
-    component: () => import('@/views/services/ServiceForm.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/services/:id/edit',
-    name: 'service-edit',
-    component: () => import('@/views/services/ServiceForm.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true },
-    props: true
-  },
-  {
     path: '/bookings',
     name: 'bookings',
     component: () => import('@/views/bookings/BookingsList.vue'),
@@ -77,11 +64,15 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
-  if (!authStore.user && authStore.token) {
-    await authStore.init()
+  // Initialize auth state if token exists
+  if (!authStore.isAuthenticated && authStore.token) {
+    const isAuthenticated = await authStore.init()
+    if (!isAuthenticated && to.meta.requiresAuth) {
+      return '/login'
+    }
   }
 
-  if (to.meta.requiresAuth && !authStore.token) {
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     return '/login'
   }
 
@@ -89,7 +80,7 @@ router.beforeEach(async (to) => {
     return '/'
   }
 
-  if (to.meta.guestOnly && authStore.token) {
+  if (to.meta.guestOnly && authStore.isAuthenticated) {
     return '/'
   }
 })

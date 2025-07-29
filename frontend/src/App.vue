@@ -1,20 +1,25 @@
 <template>
   <v-app>
+    <AppBar />
+    <NavigationDrawer />
+
     <v-main>
-      <v-container fluid>
-        <router-view />
-      </v-container>
+      <router-view />
     </v-main>
   </v-app>
 </template>
 
 <script setup>
-import { useAuthStore } from '@/store/auth'
 import { onMounted } from 'vue'
+import { useAuthStore } from '@/store/auth'
+import AppBar from '@/components/AppBar.vue'
+import NavigationDrawer from '@/components/NavigationDrawer.vue'
 
 const authStore = useAuthStore()
 
-onMounted(() => {
-  authStore.init()
+onMounted(async () => {
+  if (authStore.token) {
+    await authStore.init()
+  }
 })
 </script>

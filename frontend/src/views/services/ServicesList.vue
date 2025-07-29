@@ -21,7 +21,7 @@
         sm="6"
         md="4"
       >
-        <ServiceCard :service="service" />
+<!--        <ServiceCard :service="service" />-->
       </v-col>
     </v-row>
   </v-container>

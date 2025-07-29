@@ -1,24 +1,29 @@
 import { defineStore } from 'pinia'
-import { login, register, logout, getUser } from '@/api/auth'
+import { login, register, logout, checkAuth } from '@/api/auth'
 import router from '@/router'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     isAdmin: false,
-    token: localStorage.getItem('token') || null
+    token: localStorage.getItem('token') || null,
+    isAuthenticated: false
   }),
   actions: {
     async init() {
       if (this.token) {
         try {
-          const response = await getUser()
-          this.user = response.data
-          this.isAdmin = response.data.is_admin
+          const response = await checkAuth()
+          this.user = response.data.user
+          this.isAdmin = response.data.user.is_admin
+          this.isAuthenticated = true
+          return true
         } catch (error) {
-          this.logout()
+          this.clearAuth()
+          return false
         }
       }
+      return false
     },
     async login(credentials) {
       try {
@@ -26,32 +31,36 @@ export const useAuthStore = defineStore('auth', {
         this.user = response.data.user
         this.isAdmin = response.data.user.is_admin
         this.token = response.data.token
+        this.isAuthenticated = true
         localStorage.setItem('token', response.data.token)
-        router.push('/')
         return true
       } catch (error) {
-        return false
+        this.clearAuth()
+        throw error
       }
     },
     async register(userData) {
       try {
         await register(userData)
-        router.push('/login')
         return true
       } catch (error) {
-        return false
+        throw error
       }
     },
     async logout() {
       try {
         await logout()
       } finally {
-        this.user = null
-        this.isAdmin = false
-        this.token = null
-        localStorage.removeItem('token')
-        router.push('/login')
+        this.clearAuth()
       }
+    },
+    clearAuth() {
+      this.user = null
+      this.isAdmin = false
+      this.token = null
+      this.isAuthenticated = false
+      localStorage.removeItem('token')
+      router.push('/login')
     }
   }
 })
