@@ -33,7 +33,6 @@ Route::get('/check-auth', [AuthController::class, 'checkAuth'])
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
-
     Route::post('/services', [ServiceController::class, 'store'])
         ->middleware('admin');
     Route::put('/services/{service}', [ServiceController::class, 'update'])

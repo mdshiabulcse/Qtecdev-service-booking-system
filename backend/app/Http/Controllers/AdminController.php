@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookingRequest;
 use App\Models\Booking;
 use App\Models\Service;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -14,28 +15,23 @@ class AdminController extends Controller
         $this->middleware('auth:sanctum');
     }
 
-    public function index(Request $request)
+    public function getAllUsers()
     {
-        if ($request->user()->is_admin) {
-            $bookings = Booking::with(['user', 'service'])->get();
-        } else {
-            $bookings = $request->user()->bookings()->with('service')->get();
-        }
-
-        return response()->json($bookings);
+        $users = User::all();
+        return response()->json($users);
     }
 
-    public function store(BookingRequest $request)
+    public function updateBookingStatus(Request $request, Booking $booking)
     {
-        $service = Service::findOrFail($request->service_id);
-
-        $booking = Booking::create([
-            'user_id' => $request->user()->id,
-            'service_id' => $service->id,
-            'booking_date' => $request->booking_date,
-            'status' => 'pending',
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled'
         ]);
 
-        return response()->json($booking->load('service'), 201);
+        $booking->update(['status' => $request->status]);
+
+        return response()->json([
+            'message' => 'Booking status updated successfully',
+            'booking' => $booking
+        ]);
     }
 }

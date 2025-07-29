@@ -1,75 +1,117 @@
 <template>
   <v-container>
-    <v-tabs v-model="tab">
-      <v-tab value="services">Services</v-tab>
-      <v-tab value="bookings">Bookings</v-tab>
-      <v-tab value="users">Users</v-tab>
-    </v-tabs>
+    <!-- Admin Dashboard Title -->
+    <v-row class="mb-6">
+      <v-col cols="12">
+        <h1 class="text-h3">Admin Dashboard</h1>
+        <v-divider class="my-4"></v-divider>
+      </v-col>
+    </v-row>
 
-    <v-window v-model="tab">
-      <v-window-item value="services">
-        <ServicesList />
-      </v-window-item>
+    <!-- Users Table -->
+    <v-row>
+      <v-col cols="12">
+        <v-card>
+          <v-card-title class="d-flex justify-space-between align-center">
+            <span>All Users</span>
+            <v-btn
+              color="primary"
+              @click="fetchUsers"
+              :loading="loading"
+            >
+              <v-icon left>mdi-refresh</v-icon>
+              Refresh
+            </v-btn>
+          </v-card-title>
 
-      <v-window-item value="bookings">
-        <BookingsList />
-      </v-window-item>
-
-      <v-window-item value="users">
-        <v-table>
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="user in users" :key="user.id">
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <v-chip :color="user.is_admin ? 'primary' : 'default'">
-                {{ user.is_admin ? 'Admin' : 'User' }}
-              </v-chip>
-            </td>
-            <td>
-              <v-btn
-                size="small"
-                variant="text"
-                @click="editUser(user)"
-              >
-                Edit
-              </v-btn>
-            </td>
-          </tr>
-          </tbody>
-        </v-table>
-      </v-window-item>
-    </v-window>
+          <v-card-text>
+            <v-table>
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created At</th>
+<!--                <th>Actions</th>-->
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="user in users" :key="user.id">
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <v-chip :color="user.is_admin ? 'primary' : 'secondary'">
+                    {{ user.is_admin ? 'Admin' : 'User' }}
+                  </v-chip>
+                </td>
+                <td>{{ formatDate(user.created_at) }}</td>
+<!--                <td>-->
+<!--                  <v-btn-->
+<!--                    icon-->
+<!--                    size="small"-->
+<!--                    color="primary"-->
+<!--                    @click="viewUser(user.id)"-->
+<!--                  >-->
+<!--                    <v-icon>mdi-eye</v-icon>-->
+<!--                  </v-btn>-->
+<!--                </td>-->
+              </tr>
+              </tbody>
+            </v-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getUsers } from '@/api/auth'
-import ServicesList from '@/views/services/ServicesList.vue'
-import BookingsList from '@/views/bookings/BookingsList.vue'
+import { useAuthStore } from '@/store/auth'
+import { useRouter } from 'vue-router'
+import { getUser } from '@/api/auth'
 
-const tab = ref('services')
+const authStore = useAuthStore()
+const router = useRouter()
 const users = ref([])
+const loading = ref(false)
 
-onMounted(async () => {
+const fetchUsers = async () => {
   try {
-    const response = await getUsers()
+    loading.value = true
+    const response = await getUser()
     users.value = response.data
   } catch (error) {
-    console.error('Failed to fetch users:', error)
+    console.error('Error fetching users:', error)
+    if (error.response?.status === 401) {
+      router.push('/login')
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString()
+}
+
+const viewUser = (userId) => {
+  router.push(`/admin/users/${userId}`)
+}
+
+onMounted(() => {
+  if (!authStore.isAdmin) {
+    router.push('/')
+  } else {
+    fetchUsers()
   }
 })
-
-const editUser = (user) => {
-  console.log('Edit user:', user)
-}
 </script>
+
+<style scoped>
+.v-table {
+  width: 100%;
+}
+</style>

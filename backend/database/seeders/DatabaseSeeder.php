@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@shiabul.com',
-            'password' => Hash::make('123456'),
+            'password' => Hash::make('12345678'),
             'is_admin' => true,
         ]);
 
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Regular User',
             'email' => 'user@shiabul.com',
-            'password' => Hash::make('123456'),
+            'password' => Hash::make('12345678'),
             'is_admin' => false,
         ]);
 

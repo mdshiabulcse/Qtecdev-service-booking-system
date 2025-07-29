@@ -406,7 +406,6 @@ const confirmBooking = async (serviceId) => {
       status: 'pending'
     })
     bookingDialogs.value[serviceId] = false
-    // Show success message
     alert('Booking created successfully!')
   } catch (err) {
     console.error('Error creating booking:', err)

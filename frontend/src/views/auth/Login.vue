@@ -11,6 +11,16 @@
             class="mb-4"
           >{{ error }}</v-alert>
 
+          <!-- Add test accounts info -->
+          <v-alert
+            type="info"
+            class="mb-4"
+          >
+            <strong>Test Accounts:</strong><br>
+            Admin: admin@shiabul.com / 12345678<br>
+            User: user@shiabul.com / 12345678
+          </v-alert>
+
           <v-form @submit.prevent="handleSubmit">
             <v-text-field
               v-model="form.email"
