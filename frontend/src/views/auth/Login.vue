@@ -1,5 +1,8 @@
 <template>
   <v-container class="fill-height">
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
+      {{ snackbar.message }}
+    </v-snackbar>
     <v-row justify="center">
       <v-col cols="12" sm="8" md="6" lg="4">
         <v-card class="pa-4">
@@ -65,7 +68,11 @@ import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const router = useRouter()
-
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'success'
+})
 const form = ref({
   email: '',
   password: ''
@@ -74,6 +81,13 @@ const errors = ref({})
 const error = ref('')
 const isSubmitting = ref(false)
 
+const showSnackbar = (message, color = 'success') => {
+  snackbar.value = {
+    show: true,
+    message,
+    color
+  }
+}
 const handleSubmit = async () => {
   isSubmitting.value = true
   errors.value = {}
@@ -82,6 +96,7 @@ const handleSubmit = async () => {
   try {
     const success = await authStore.login(form.value)
     if (success) {
+      showSnackbar('Login successful! Redirecting to dashboard...', 'success');
       router.push('/')
     }
   } catch (err) {
