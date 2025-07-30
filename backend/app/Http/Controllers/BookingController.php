@@ -35,7 +35,6 @@ class BookingController extends Controller
             'booking_date' => $request->booking_date,
             'status' => 'pending',
         ]);
-
         return response()->json($booking->load('service'), 201);
     }
 }

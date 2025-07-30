@@ -1,10 +1,12 @@
 <template>
   <v-container>
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
+      {{ snackbar.message }}
+    </v-snackbar>
     <v-row>
       <v-col cols="12">
         <h1 class="text-h4 mb-4">Our Services</h1>
 
-        <!-- Add Service Button (Admin only) -->
         <v-btn
           v-if="authStore.isAdmin"
           color="primary"
@@ -282,24 +284,23 @@ import { useAuthStore } from '@/store/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
-// Service data
+
 const services = ref([])
 const loading = ref(true)
 const error = ref(null)
 
-// Filter services based on user role
+
 const filteredServices = computed(() => {
   return authStore.isAdmin
     ? services.value
     : services.value.filter(service => service.status)
 })
 
-// Dialog states
 const serviceDialog = ref(false)
 const deleteDialog = ref(false)
 const serviceForm = ref(null)
 
-// Booking related states
+
 const bookingDialogs = ref({})
 const bookingDates = ref({})
 const dateMenus = ref({})
@@ -321,7 +322,11 @@ const currentService = ref({
 
 // Service to delete
 const serviceToDelete = ref(null)
-
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'success'
+})
 const fetchServices = async () => {
   try {
     loading.value = true
@@ -361,11 +366,14 @@ const saveService = async () => {
   try {
     if (isEditing.value) {
       await updateService(currentService.value.id, currentService.value)
+      showSnackbar( 'Services updated successfully!')
     } else {
       await createService(currentService.value)
+      showSnackbar( 'Services created successfully!')
     }
     await fetchServices()
     serviceDialog.value = false
+
   } catch (err) {
     console.error('Error saving service:', err)
     error.value = err.message || 'Failed to save service'
@@ -397,16 +405,25 @@ const confirmDelete = async () => {
 
 const confirmBooking = async (serviceId) => {
   if (!bookingDates.value[serviceId]) return
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const bookingDate = new Date(bookingDates.value[serviceId])
+  if (bookingDate < today) {
+    error.value = 'Booking date must be today or in the future'
+    return
+  }
 
   bookingLoading.value[serviceId] = true
   try {
-    await createBooking({
+    const response = await createBooking({
       service_id: serviceId,
       booking_date: bookingDates.value[serviceId],
       status: 'pending'
     })
+
     bookingDialogs.value[serviceId] = false
-    alert('Booking created successfully!')
+    showSnackbar(response.data.message || 'Booking created successfully!')
+    bookingDates.value[serviceId] = null
   } catch (err) {
     console.error('Error creating booking:', err)
     error.value = err.message || 'Failed to create booking'
@@ -415,6 +432,14 @@ const confirmBooking = async (serviceId) => {
   }
 }
 
+
+const showSnackbar = (message, color = 'success') => {
+  snackbar.value = {
+    show: true,
+    message,
+    color
+  }
+}
 onMounted(() => {
   fetchServices()
 })
