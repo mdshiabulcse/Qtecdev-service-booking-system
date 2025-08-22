@@ -444,3 +444,33 @@ docker-compose up -d --build
 Environment	 Backend URL	       Frontend URL
 Docker	http://localhost:8000	http://localhost:3000
 Manual	http://localhost:8000	http://localhost:3000
+
+```
+
+
+****************************
+
+
+***************************
+
+
+ ## Laravel Service Layer and PHPUnit Testing Guide
+
+
+Running Tests
+
+Run all tests using: php artisan test
+
+Or 
+using PHPUnit directly: ./vendor/bin/phpunit
+
+or
+
+php artisan serve
+
+http://127.0.0.1:8000/subtract?a=50&b=20
+
+
+
+ 
+
