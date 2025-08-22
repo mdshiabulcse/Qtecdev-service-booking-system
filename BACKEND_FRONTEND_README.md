@@ -376,3 +376,71 @@ npm run dev
 - **Build Tool**: Vite
 
 > **Note**: Replace example image URLs with actual screenshots of your application
+> 
+> 
+> 
+> 
+> # Service Booking System - Complete Setup Guide
+
+## 🛠️ Prerequisites
+- Docker Desktop (for Docker setup)
+- Node.js v18+ (for manual frontend)
+- PHP 8.1+ & Composer (for manual backend)
+- MySQL 5.7+
+
+---
+
+## 🐳 Docker Setup (Recommended)
+
+# Service Booking System - Setup Guide for Docker
+
+## ℹ️ Important Note
+**If Docker setup fails**, please follow the **Manual Setup** instructions in section top below. Some systems may require additional Docker configuration or may not support containerization.
+
+---
+
+### Prerequisites
+- Docker Desktop running
+- Ports 8000/3000 available
+
+### Clone Repository
+
+### Setup Commands
+```bash
+git clone https://github.com/mdshiabulcse/Qtecdev-service-booking-system.git
+cd Qtecdev-service-booking-system/backend
+docker-compose up -d --build
+docker-compose exec app php artisan migrate --seed
+cd ../frontend
+docker-compose up -d --build
+## Backend Setup
+bash
+cd backend
+cp .env.example .env
+Edit .env:
+
+.env file add 
+DB_HOST=mysql
+DB_DATABASE=simple_task_db
+DB_USERNAME=simple_task
+DB_PASSWORD=password
+Start containers:
+
+bash
+docker-compose up -d --build
+Run migrations:
+
+bash
+docker-compose exec app php artisan migrate --seed
+
+Frontend Setup
+bash
+cd ../frontend
+docker-compose up -d --build
+
+
+
+🔌 Access Points
+Environment	 Backend URL	       Frontend URL
+Docker	http://localhost:8000	http://localhost:3000
+Manual	http://localhost:8000	http://localhost:3000
