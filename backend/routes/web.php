@@ -34,3 +34,6 @@ Route::get('/db-seed', function() {
     Artisan::call('db:seed');
     return 'DB Seed Done';
 });
+
+Route::get('/add',[\App\Http\Controllers\PhpUnitTestController::class,'add']);
+Route::get('/subtract',[\App\Http\Controllers\PhpUnitTestController::class,'subtract']);
