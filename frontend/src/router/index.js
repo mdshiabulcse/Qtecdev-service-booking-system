@@ -1,45 +1,47 @@
+// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/store/auth'
+import { useAuthStore } from '@/stores/auth'
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: () => import('@/views/Home.vue')
-  },
-  {
     path: '/login',
-    name: 'login',
-    component: () => import('@/views/auth/Login.vue'),
-    meta: { guestOnly: true }
+    name: 'Login',
+    component: () => import('@/views/Login.vue'),
+    meta: { requiresAuth: false, guestOnly: true }
   },
   {
     path: '/register',
-    name: 'register',
-    component: () => import('@/views/auth/Register.vue'),
-    meta: { guestOnly: true }
+    name: 'Register',
+    component: () => import('@/views/Register.vue'),
+    meta: { requiresAuth: false, guestOnly: true }
   },
   {
-    path: '/services',
-    name: 'services',
-    component: () => import('@/views/services/ServicesList.vue')
-  },
-  {
-    path: '/bookings',
-    name: 'bookings',
-    component: () => import('@/views/bookings/BookingsList.vue'),
+    path: '/',
+    name: 'Dashboard',
+    component: () => import('@/views/Dashboard.vue'),
     meta: { requiresAuth: true }
   },
   {
-    path: '/admin',
-    name: 'admin',
-    component: () => import('@/views/AdminDashboard.vue'),
+    path: '/students',
+    name: 'Students',
+    component: () => import('@/views/Students.vue'),
+    meta: { requiresAuth: true, requiresTeacher: true }
+  },
+  {
+    path: '/attendance',
+    name: 'Attendance',
+    component: () => import('@/views/Attendance.vue'),
+    meta: { requiresAuth: true, requiresTeacher: true }
+  },
+  {
+    path: '/admin/users',
+    name: 'AdminUsers',
+    component: () => import('@/views/admin/Users.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
     path: '/:pathMatch(.*)*',
-    name: 'not-found',
-    component: () => import('@/views/NotFound.vue')
+    redirect: '/'
   }
 ]
 
@@ -48,27 +50,43 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
+  // Check authentication if we have a token but not authenticated
   if (!authStore.isAuthenticated && authStore.token) {
-    const isAuthenticated = await authStore.init()
-    if (!isAuthenticated && to.meta.requiresAuth) {
-      return '/login'
+    const isAuthenticated = await authStore.checkAuth()
+    if (!isAuthenticated) {
+      next('/login')
+      return
     }
   }
 
+  // Check if route requires authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return '/'
+    next('/login')
+    return
   }
 
-  if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    return '/'
-  }
-
+  // Check if route is for guests only
   if (to.meta.guestOnly && authStore.isAuthenticated) {
-    return '/'
+    next('/')
+    return
   }
+
+  // Check admin routes
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    next('/')
+    return
+  }
+
+  // Check teacher routes
+  if (to.meta.requiresTeacher && !authStore.isTeacher && !authStore.isAdmin) {
+    next('/')
+    return
+  }
+
+  next()
 })
 
 export default router

@@ -1,55 +1,48 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\AttendanceController;
+use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-
-
-
-
-
-
+// Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/services', [ServiceController::class, 'index']);
-Route::get('/check-auth', [AuthController::class, 'checkAuth'])
-    ->middleware('auth:sanctum');
 
+// Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/check-auth', [AuthController::class, 'checkAuth']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::post('/services', [ServiceController::class, 'store'])
-        ->middleware('admin');
-    Route::put('/services/{service}', [ServiceController::class, 'update'])
-        ->middleware('admin');
-    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])
-        ->middleware('admin');
+    // Dashboard routes - accessible to all authenticated users
+    Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
+    Route::get('/dashboard/recent-activities', [DashboardController::class, 'getRecentActivities']);
+    Route::get('/dashboard/monthly-chart', [DashboardController::class, 'getMonthlyChart']);
+    Route::get('/dashboard/class-performance', [DashboardController::class, 'getClassPerformance']);
 
-    Route::get('/bookings', [BookingController::class, 'index']);
-    Route::post('/bookings', [BookingController::class, 'store']);
+    // Student routes - accessible to teachers and admins
+    Route::middleware('teacher')->group(function () {
+        Route::apiResource('students', StudentController::class);
+        Route::get('/students/{student}/attendance', [StudentController::class, 'getAttendance']);
+        Route::get('/students/class/{class}/section/{section}', [StudentController::class, 'getByClassSection']);
 
+        // Attendance routes
+        Route::post('/attendance/bulk', [AttendanceController::class, 'recordBulk']);
+        Route::get('/attendance/today', [AttendanceController::class, 'getTodayAttendance']);
+        Route::get('/attendance/monthly-report', [AttendanceController::class, 'getMonthlyReport']);
+        Route::get('/attendance/class/{class}/section/{section}', [AttendanceController::class, 'getClassAttendance']);
+        Route::get('/attendance/student/{studentId}', [AttendanceController::class, 'getStudentAttendance']);
+    });
 
+    // Admin only routes
     Route::middleware('admin')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'getAllUsers']);
-        Route::put('/admin/bookings/{booking}', [AdminController::class, 'updateBookingStatus']);
+        Route::post('/admin/users', [AdminController::class, 'createUser']);
+        Route::put('/admin/users/{user}', [AdminController::class, 'updateUser']);
+        Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser']);
+
+        Route::get('/admin/system-stats', [AdminController::class, 'getSystemStats']);
     });
 });
-
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});

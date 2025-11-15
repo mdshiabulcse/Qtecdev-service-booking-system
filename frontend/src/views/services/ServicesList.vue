@@ -279,7 +279,7 @@ import {
   deleteService
 } from '@/api/services'
 import { createBooking } from '@/api/bookings'
-import { useAuthStore } from '@/store/auth'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()

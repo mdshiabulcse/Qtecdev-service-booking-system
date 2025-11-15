@@ -85,7 +85,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getBookings, updateBookingStatus } from '@/api/bookings'
-import { useAuthStore } from '@/store/auth'
+import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 const bookings = ref([])

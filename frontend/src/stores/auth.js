@@ -1,68 +1,85 @@
+// src/stores/auth.js
 import { defineStore } from 'pinia'
-import { login, register, logout, checkAuth } from '@/api/auth'
-import router from '@/router'
+import { authService } from '@/services/api'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    isAdmin: false,
-    token: localStorage.getItem('token') || null,
+    token: null,
     isAuthenticated: false
   }),
+
+  persist: true,
+
+  getters: {
+    isAdmin: (state) => state.user?.role === 'admin',
+    isTeacher: (state) => state.user?.role === 'teacher',
+    isParent: (state) => state.user?.role === 'parent',
+    userRole: (state) => state.user?.role
+  },
+
   actions: {
-    async init() {
-      if (this.token) {
-        try {
-          const response = await checkAuth()
-          this.user = response.data.user
-          this.isAdmin = response.data.user.is_admin
-          this.isAuthenticated = true
-          return true
-        } catch (error) {
-          this.clearAuth()
-          return false
-        }
-      }
-      return false
-    },
     async login(credentials) {
       try {
-        const response = await login(credentials)
+        const response = await authService.login(credentials)
         this.user = response.data.user
-        this.isAdmin = response.data.user.is_admin
         this.token = response.data.token
         this.isAuthenticated = true
-        localStorage.setItem('token', response.data.token)
-        localStorage.setItem('users', response.data.user)
-        localStorage.setItem('is_admin',  response.data.user.is_admin)
-        return true
+        return response
       } catch (error) {
         this.clearAuth()
         throw error
       }
     },
+
     async register(userData) {
       try {
-        await register(userData)
-        return true
+        const response = await authService.register(userData)
+        this.user = response.data.user
+        this.token = response.data.token
+        this.isAuthenticated = true
+        return response
       } catch (error) {
+        this.clearAuth()
         throw error
       }
     },
+
     async logout() {
       try {
-        await logout()
+        await authService.logout()
+      } catch (error) {
+        console.error('Logout error:', error)
       } finally {
         this.clearAuth()
       }
     },
+
+    async checkAuth() {
+      if (!this.token) {
+        this.clearAuth()
+        return false
+      }
+
+      try {
+        const response = await authService.checkAuth()
+        this.user = response.data.user
+        this.isAuthenticated = true
+        return true
+      } catch (error) {
+        this.clearAuth()
+        return false
+      }
+    },
+
+    initializeAuth() {
+      return this.checkAuth()
+    },
+
     clearAuth() {
       this.user = null
-      this.isAdmin = false
       this.token = null
       this.isAuthenticated = false
-      localStorage.removeItem('token')
-      router.push('/login')
     }
   }
 })

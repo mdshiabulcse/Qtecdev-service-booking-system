@@ -16,15 +16,22 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'is_admin' => false,
+            'role' => 'teacher',
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'role' => $user->role
+            ],
             'token' => $token,
         ], 201);
     }
@@ -39,9 +46,17 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        $token = $user->createToken('auth_token', [
-            $user->is_admin ? 'admin' : 'user'
-        ])->plainTextToken;
+        // Create token with role-based abilities
+        $abilities = [];
+        if ($user->role === 'admin') {
+            $abilities = ['admin'];
+        } elseif ($user->role === 'teacher') {
+            $abilities = ['teacher'];
+        } elseif ($user->role === 'parent') {
+            $abilities = ['parent'];
+        }
+
+        $token = $user->createToken('auth_token', $abilities)->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful',
@@ -49,7 +64,8 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'is_admin' => $user->is_admin
+                'phone' => $user->phone,
+                'role' => $user->role
             ],
             'token' => $token,
         ]);
@@ -69,11 +85,17 @@ class AuthController extends Controller
 
     public function checkAuth(Request $request)
     {
+        $user = $request->user();
+
         return response()->json([
             'authenticated' => true,
-            'user' => $request->user(),
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'role' => $user->role
+            ],
         ]);
     }
-
-
 }
